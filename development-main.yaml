@@ -1,0 +1,5 @@
+---
+- name: development-main
+  hosts: development-main
+  roles:
+    - role: mdns
