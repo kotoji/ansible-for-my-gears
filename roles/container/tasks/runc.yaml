@@ -1,15 +1,28 @@
 ---
 - name: check if runc exists
-  command: runc --version
+  command: ls -l "{{archive_dir}}/runc.{{arch_bsd_sytle}}-{{runc_version}}"
   ignore_errors: yes
   changed_when: no
   failed_when: no
-  register: check_cmd
+  register: check_archive
 
-- name: install runc
+- name: create archive_dir
+  file:
+    path: "{{archive_dir}}"
+    state: directory
+
+- name: download runc
   get_url:
     url: "https://github.com/opencontainers/runc/releases/download/v{{runc_version}}/runc.{{arch_bsd_sytle}}"
+    dest: "{{archive_dir}}/runc.{{arch_bsd_sytle}}-{{runc_version}}"
+  when: check_archive.rc != 0
+
+- name: install runc
+  copy:
+    src: "{{archive_dir}}/runc.{{arch_bsd_sytle}}-{{runc_version}}"
     dest: /usr/local/bin/runc
     mode: 0755
+    force: yes # overwrite when version up
+    remote_src: yes
   become: yes
-  when: check_cmd.rc != 0
+  when: check_archive.rc != 0
