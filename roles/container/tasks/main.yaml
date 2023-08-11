@@ -2,3 +2,7 @@
 - include_role:
     name: container
     tasks_from: runc.yaml
+
+- include_role:
+    name: container
+    tasks_from: containerd.yaml

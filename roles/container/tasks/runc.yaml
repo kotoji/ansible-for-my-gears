@@ -1,14 +1,14 @@
 ---
-- name: check if command exists
+- name: check if runc exists
   command: runc --version
   ignore_errors: yes
   changed_when: no
   failed_when: no
   register: check_cmd
 
-- name: install
+- name: install runc
   get_url:
-    url: "https://github.com/opencontainers/runc/releases/download/{{runc_version}}/runc.{{arch_bsd_sytle}}"
+    url: "https://github.com/opencontainers/runc/releases/download/v{{runc_version}}/runc.{{arch_bsd_sytle}}"
     dest: /usr/local/bin/runc
     mode: 0755
   become: yes

@@ -1,0 +1,48 @@
+---
+- name: check if containerd exists
+  command: containerd --version
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_cmd
+
+- name: check if containerd archive exists
+  command: ls -l "{{archive_dir}}/containerd-{{containerd_version}}-linux-{{arch_bsd_sytle}}.tar.gz"
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_archive
+
+- name: create archive_dir
+  file:
+    path: "{{archive_dir}}"
+    state: directory
+
+- name: download containerd
+  get_url:
+    url: "https://github.com/containerd/containerd/releases/download/v{{containerd_version}}/containerd-{{containerd_version}}-linux-{{arch_bsd_sytle}}.tar.gz"
+    dest: "{{archive_dir}}/containerd-{{containerd_version}}-linux-{{arch_bsd_sytle}}.tar.gz"
+  when:
+    - check_cmd.rc != 0
+    - check_archive != 0
+
+- name: install containerd
+  ansible.builtin.unarchive:
+    src: "{{archive_dir}}/containerd-{{containerd_version}}-linux-{{arch_bsd_sytle}}.tar.gz"
+    dest: /usr/local/
+    remote_src: yes
+  become: yes
+  when:
+    - check_cmd.rc != 0
+
+- name: create systemd configs dir
+  file:
+    path: /usr/local/lib/systemd/system
+    state: directory
+  become: yes
+
+- name: copy containerd.service file
+  copy:
+    src: containerd.service
+    dest: /usr/local/lib/systemd/system/containerd.service
+  become: yes
