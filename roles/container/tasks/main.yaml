@@ -9,4 +9,8 @@
 
 - include_role:
     name: container
+    tasks_from: buildkit.yaml
+
+- include_role:
+    name: container
     tasks_from: cni.yaml
