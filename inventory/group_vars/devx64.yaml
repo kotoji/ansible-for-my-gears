@@ -1,0 +1,4 @@
+---
+arch_bsd_sytle: amd64
+arch_linux_sytle: x86_64
+arch_mac_style: x86-64

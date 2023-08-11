@@ -1,0 +1,4 @@
+---
+src_dir: "{{ansible_env.HOME}}/src"
+
+runc_version: v1.1.9

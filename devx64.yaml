@@ -1,0 +1,6 @@
+---
+- name: devx64
+  hosts: devx64
+  roles:
+    - role: mdns
+    - role: container

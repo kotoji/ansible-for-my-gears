@@ -1,0 +1,7 @@
+---
+all:
+  children:
+    devx64:
+      hosts:
+        schema23:
+
