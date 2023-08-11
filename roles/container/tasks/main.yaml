@@ -5,9 +5,8 @@
 
 - include_role:
     name: container
-    tasks_from: cni.yaml
+    tasks_from: containerd.yaml
 
 - include_role:
     name: container
-    tasks_from: containerd.yaml
-
+    tasks_from: cni.yaml
