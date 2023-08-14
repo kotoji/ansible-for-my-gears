@@ -1,6 +1,4 @@
 ---
-archive_dir: "{{ansible_env.HOME}}/archives"
-
 runc_version: 1.1.9
 containerd_version: 1.7.3
 buildkit_version: 0.12.1

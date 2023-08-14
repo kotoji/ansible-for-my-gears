@@ -1,4 +1,7 @@
 ---
+dotlocal_dir: "{{ansible_env.HOME}}/.local"
+archive_dir: "{{ansible_env.HOME}}/archives"
+
 arch_bsd_style: amd64
 arch_linux_style: x86_64
 arch_mac_style: x86-64

@@ -1,0 +1,39 @@
+---
+- name: check if nvim source exists
+  command: ls -l "{{archive_dir}}/nvim-{{nvim_version}}-source.tar.gz"
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_source
+
+- name: download nvim source
+  get_url:
+    url: "https://github.com/neovim/neovim/archive/refs/tags/v{{nvim_version}}.tar.gz"
+    dest: "{{archive_dir}}/nvim-{{nvim_version}}-source.tar.gz"
+  when:
+    - check_source != 0
+
+- name: unarchive
+  ansible.builtin.unarchive:
+    src: "{{archive_dir}}/nvim-{{nvim_version}}-source.tar.gz"
+    dest: "{{archive_dir}}"
+    remote_src: yes
+  when:
+    - check_source != 0
+
+- name: build
+  command: chdir="{{archive_dir}}/neovim-{{nvim_version}}" make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX="{{dotlocal_dir}}"
+  when:
+    - check_source != 0
+
+# FIXME: do it somewhere else
+- name: create dotlocal directroy
+  file:
+    path: "{{dotlocal_dir}}"
+    state: directory
+
+- name: install
+  command: chdir="{{archive_dir}}/neovim-{{nvim_version}}" make install
+  become: true
+  when:
+    - check_source != 0

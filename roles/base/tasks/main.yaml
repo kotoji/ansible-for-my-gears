@@ -1,0 +1,11 @@
+---
+- name: install packages
+  apt:
+    name: 
+      - build-essential
+      - cmake
+      - zip
+      - gettext
+    state: present
+    update_cache: true
+  become: true

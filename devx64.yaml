@@ -3,4 +3,6 @@
   hosts: devx64
   roles:
     - role: mdns
+    - role: base
+    - role: nvim
     - role: container
