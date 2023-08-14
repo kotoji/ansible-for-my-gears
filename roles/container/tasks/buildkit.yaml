@@ -1,6 +1,6 @@
 ---
 - name: check if buildkit archive exists
-  command: ls -l "{{archive_dir}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_sytle}}.tar.gz"
+  command: ls -l "{{archive_dir}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_style}}.tar.gz"
   ignore_errors: yes
   changed_when: no
   failed_when: no
@@ -8,14 +8,14 @@
 
 - name: download buildkit
   get_url:
-    url: "https://github.com/moby/buildkit/releases/download/v{{buildkit_version}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_sytle}}.tar.gz"
-    dest: "{{archive_dir}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_sytle}}.tar.gz"
+    url: "https://github.com/moby/buildkit/releases/download/v{{buildkit_version}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_style}}.tar.gz"
+    dest: "{{archive_dir}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_style}}.tar.gz"
   when:
     - check_archive != 0
 
 - name: install buildkit
   ansible.builtin.unarchive:
-    src: "{{archive_dir}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_sytle}}.tar.gz"
+    src: "{{archive_dir}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_style}}.tar.gz"
     dest: /usr/local/
     remote_src: yes
   become: yes

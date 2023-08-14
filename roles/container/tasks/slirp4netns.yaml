@@ -1,0 +1,26 @@
+---
+- name: check if slirp4netns archive exists
+  command: ls -l "{{archive_dir}}/slirp4netns-{{slirp4netns_version}}-{{arch_linux_style}}"
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_archive
+
+- name: download slirp4netns
+  get_url:
+    url: "https://github.com/rootless-containers/slirp4netns/releases/download/v{{slirp4netns_version}}/slirp4netns-{{arch_linux_style}}"
+    dest: "{{archive_dir}}/slirp4netns-{{slirp4netns_version}}-{{arch_linux_style}}"
+  when:
+    - check_archive != 0
+
+- name: install slirp4netns
+  ansible.builtin.copy:
+    src: "{{archive_dir}}/slirp4netns-{{slirp4netns_version}}-{{arch_linux_style}}"
+    dest: /usr/local/bin/slirp4netns
+    mode: 0755
+    force: yes # overwrite when version up
+    remote_src: yes
+  become: yes
+  when:
+    - check_archive != 0
+

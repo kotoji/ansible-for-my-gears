@@ -14,3 +14,15 @@
 - include_role:
     name: container
     tasks_from: cni.yaml
+
+- include_role:
+    name: container
+    tasks_from: rootlesskit.yaml
+
+- include_role:
+    name: container
+    tasks_from: slirp4netns.yaml
+
+- include_role:
+    name: container
+    tasks_from: nerdctl.yaml

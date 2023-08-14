@@ -1,0 +1,63 @@
+---
+- name: check if nerdctl archive exists
+  command: ls -l "{{archive_dir}}/nerdctl-{{nerdctl_version}}-linux-{{arch_bsd_style}}.tar.gz"
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_archive
+
+- name: download nerdctl
+  get_url:
+    url: "https://github.com/containerd/nerdctl/releases/download/v{{nerdctl_version}}/nerdctl-{{nerdctl_version}}-linux-{{arch_bsd_style}}.tar.gz"
+    dest: "{{archive_dir}}/nerdctl-{{nerdctl_version}}-linux-{{arch_bsd_style}}.tar.gz"
+  when:
+    - check_archive != 0
+
+- name: install nerdctl
+  ansible.builtin.unarchive:
+    src: "{{archive_dir}}/nerdctl-{{nerdctl_version}}-linux-{{arch_bsd_style}}.tar.gz"
+    dest: /usr/local/bin
+    remote_src: yes
+  become: yes
+  when:
+    - check_archive != 0
+
+# setup rootless nerdctl
+
+- name: install uidmap
+  ansible.builtin.apt:
+    name: uidmap
+    state: latest
+  become: true
+
+- name: check if cgroup service config file exist
+  command: ls -l /etc/systemd/system/user@.service.d/delegate.conf
+  become: true
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_config
+
+- name: create user's service directroy
+  file: 
+    path: /etc/systemd/system/user@.service.d
+    state: directory
+  become: yes
+
+- name: create delegate.conf of cgroup
+  copy:
+    dest: /etc/systemd/system/user@.service.d/delegate.conf
+    content: |
+      [Service]
+      Delegate=cpu cpuset io memory pids
+  become: true
+  when: check_config.rc != 0
+
+- name: systemctl deamon-reload
+  command: systemctl daemon-reload
+  become: true
+  when: check_config.rc != 0
+
+- name: enable services
+  command: containerd-rootless-setuptool.sh install
+  when: check_config.rc != 0

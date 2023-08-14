@@ -1,0 +1,24 @@
+---
+- name: check if rootlesskit archive exists
+  command: ls -l "{{archive_dir}}/rootlesskit-{{rootlesskit_version}}-{{arch_linux_style}}.tar.gz"
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_archive
+
+- name: download rootlesskit
+  get_url:
+    url: "https://github.com/rootless-containers/rootlesskit/releases/download/v{{rootlesskit_version}}/rootlesskit-{{arch_linux_style}}.tar.gz"
+    dest: "{{archive_dir}}/rootlesskit-{{rootlesskit_version}}-{{arch_linux_style}}.tar.gz"
+  when:
+    - check_archive != 0
+
+- name: install rootlesskit
+  ansible.builtin.unarchive:
+    src: "{{archive_dir}}/rootlesskit-{{rootlesskit_version}}-{{arch_linux_style}}.tar.gz"
+    dest: /usr/local/bin
+    remote_src: yes
+  become: yes
+  when:
+    - check_archive != 0
+

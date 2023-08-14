@@ -1,6 +1,6 @@
 ---
 - name: check if CNI plugins archive exists
-  command: ls -l "{{archive_dir}}/cni-plugins-linux-{{arch_bsd_sytle}}-v{{cni_plugin_version}}.tgz"
+  command: ls -l "{{archive_dir}}/cni-plugins-linux-{{arch_bsd_style}}-v{{cni_plugin_version}}.tgz"
   ignore_errors: yes
   changed_when: no
   failed_when: no
@@ -8,8 +8,8 @@
 
 - name: download CNI plugins
   get_url:
-    url: "https://github.com/containernetworking/plugins/releases/download/v{{cni_plugin_version}}/cni-plugins-linux-{{arch_bsd_sytle}}-v{{cni_plugin_version}}.tgz"
-    dest: "{{archive_dir}}/cni-plugins-linux-{{arch_bsd_sytle}}-v{{cni_plugin_version}}.tgz"
+    url: "https://github.com/containernetworking/plugins/releases/download/v{{cni_plugin_version}}/cni-plugins-linux-{{arch_bsd_style}}-v{{cni_plugin_version}}.tgz"
+    dest: "{{archive_dir}}/cni-plugins-linux-{{arch_bsd_style}}-v{{cni_plugin_version}}.tgz"
   when:
     - check_archive != 0
 
@@ -21,7 +21,7 @@
 
 - name: install CNI plugins
   ansible.builtin.unarchive:
-    src: "{{archive_dir}}/cni-plugins-linux-{{arch_bsd_sytle}}-v{{cni_plugin_version}}.tgz"
+    src: "{{archive_dir}}/cni-plugins-linux-{{arch_bsd_style}}-v{{cni_plugin_version}}.tgz"
     dest: /usr/local/libexec/cni
     remote_src: yes
   become: yes
