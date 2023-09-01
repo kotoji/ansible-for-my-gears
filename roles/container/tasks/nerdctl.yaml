@@ -11,7 +11,7 @@
     url: "https://github.com/containerd/nerdctl/releases/download/v{{nerdctl_version}}/nerdctl-{{nerdctl_version}}-linux-{{arch_bsd_style}}.tar.gz"
     dest: "{{archive_dir}}/nerdctl-{{nerdctl_version}}-linux-{{arch_bsd_style}}.tar.gz"
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 
 - name: install nerdctl
   ansible.builtin.unarchive:
@@ -20,7 +20,7 @@
     remote_src: yes
   become: yes
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 
 # setup rootless nerdctl
 

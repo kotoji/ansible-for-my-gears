@@ -11,7 +11,7 @@
     url: "https://github.com/rootless-containers/slirp4netns/releases/download/v{{slirp4netns_version}}/slirp4netns-{{arch_linux_style}}"
     dest: "{{archive_dir}}/slirp4netns-{{slirp4netns_version}}-{{arch_linux_style}}"
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 
 - name: install slirp4netns
   ansible.builtin.copy:
@@ -22,5 +22,5 @@
     remote_src: yes
   become: yes
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 

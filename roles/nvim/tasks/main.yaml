@@ -11,7 +11,7 @@
     url: "https://github.com/neovim/neovim/archive/refs/tags/v{{nvim_version}}.tar.gz"
     dest: "{{archive_dir}}/nvim-{{nvim_version}}-source.tar.gz"
   when:
-    - check_source != 0
+    - check_source.rc != 0
 
 - name: unarchive
   ansible.builtin.unarchive:
@@ -19,12 +19,12 @@
     dest: "{{archive_dir}}"
     remote_src: yes
   when:
-    - check_source != 0
+    - check_source.rc != 0
 
 - name: build
   command: chdir="{{archive_dir}}/neovim-{{nvim_version}}" make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX="{{dotlocal_dir}}"
   when:
-    - check_source != 0
+    - check_source.rc != 0
 
 # FIXME: do it somewhere else
 - name: create dotlocal directroy
@@ -34,6 +34,5 @@
 
 - name: install
   command: chdir="{{archive_dir}}/neovim-{{nvim_version}}" make install
-  become: true
   when:
-    - check_source != 0
+    - check_source.rc != 0

@@ -11,7 +11,7 @@
     url: "https://github.com/moby/buildkit/releases/download/v{{buildkit_version}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_style}}.tar.gz"
     dest: "{{archive_dir}}/buildkit-v{{buildkit_version}}.linux-{{arch_bsd_style}}.tar.gz"
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 
 - name: install buildkit
   ansible.builtin.unarchive:
@@ -20,7 +20,7 @@
     remote_src: yes
   become: yes
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 
 - name: create systemd configs dir
   file:

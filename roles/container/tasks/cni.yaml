@@ -11,7 +11,7 @@
     url: "https://github.com/containernetworking/plugins/releases/download/v{{cni_plugin_version}}/cni-plugins-linux-{{arch_bsd_style}}-v{{cni_plugin_version}}.tgz"
     dest: "{{archive_dir}}/cni-plugins-linux-{{arch_bsd_style}}-v{{cni_plugin_version}}.tgz"
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 
 - name: create libexec/cni dir
   file:
@@ -26,5 +26,5 @@
     remote_src: yes
   become: yes
   when:
-    - check_archive != 0
+    - check_archive.rc != 0
 
