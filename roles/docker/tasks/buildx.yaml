@@ -1,0 +1,29 @@
+---
+- name: check if docker buildx exists
+  command: ls -l "{{ archive_dir }}/docker-buildx-{{ buildx_version }}"
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_archive
+
+- name: download docker buildx
+  get_url:
+    url: "https://github.com/docker/buildx/releases/download/v{{ buildx_version }}/buildx-v{{ buildx_version }}.linux-{{ arch_bsd_style }}"
+    dest: "{{ archive_dir }}/docker-buildx-{{ buildx_version }}"
+  when:
+    - check_archive.rc != 0
+
+- name: create plugins directory
+  file:
+    path: "{{ docker_config_dir }}/cli-plugins"
+    state: directory
+
+- name: install docker buildx
+  copy:
+    src: "{{ archive_dir }}/docker-buildx-{{ buildx_version }}"
+    dest: "{{ docker_config_dir }}/cli-plugins/docker-buildx"
+    mode: 0755
+    force: yes # overwrite when version up
+    remote_src: yes
+  when:
+    - check_archive.rc != 0
