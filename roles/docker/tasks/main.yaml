@@ -6,3 +6,7 @@
 - include_role:
     name: docker
     tasks_from: docker.yaml
+
+- include_role:
+    name: docker
+    tasks_from: compose.yaml

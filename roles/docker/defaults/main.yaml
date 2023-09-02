@@ -1,2 +1,5 @@
 ---
+docker_config_dir: "{{ansible_env.HOME}}/.docker"
+
 docker_version: 24.0.5
+compose_version: 2.21.0
