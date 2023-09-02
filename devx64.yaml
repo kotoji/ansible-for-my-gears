@@ -6,3 +6,4 @@
     - role: base
     - role: nvim
     - role: container
+    - role: docker

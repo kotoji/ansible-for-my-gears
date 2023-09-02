@@ -1,0 +1,98 @@
+---
+# Prerequisites:
+#   - containerd
+
+### install
+
+- name: check if docker archive exists
+  command: ls -l "{{ archive_dir }}/docker-{{ docker_version }}.tgz"
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  register: check_archive
+
+- name: download docker
+  get_url:
+    url: "https://download.docker.com/linux/static/stable/{{ arch_linux_style }}/docker-{{ docker_version }}.tgz"
+    dest: "{{ archive_dir }}/docker-{{ docker_version }}.tgz"
+
+  when:
+    - check_archive.rc != 0
+
+- name: create directory
+  file:
+    path: "{{ archive_dir }}/docker-{{ docker_version }}"
+    state: directory
+  when:
+    - check_archive.rc != 0
+
+- name: unarchive docker
+  ansible.builtin.unarchive:
+    src: "{{ archive_dir }}/docker-{{ docker_version }}.tgz"
+    dest: "{{ archive_dir }}/docker-{{ docker_version }}/"
+    remote_src: yes
+  become: yes
+  when:
+    - check_archive.rc != 0
+
+- name: install docker
+  copy:
+    src: "{{ archive_dir }}/docker-{{ docker_version }}/docker/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+    force: yes # overwrite when version up
+    remote_src: yes
+  with_items: # exclude containerd and others due not to overwrite them. they are already installed.
+    - docker
+    - docker-init
+    - docker-proxy
+    - dockerd
+  become: yes
+  when: check_archive.rc != 0
+
+- name: create systemd configs dir
+  file:
+    path: /usr/local/lib/systemd/system
+    state: directory
+  become: yes
+
+### systemd settings
+
+- name: check if docker.service file exists
+  command: ls -l /usr/local/lib/systemd/system/docker.service
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  become: yes
+  register: check_sevicefile
+
+- name: copy docker.service file
+  copy:
+    src: docker.service
+    dest: /usr/local/lib/systemd/system/docker.service
+  become: yes
+  when:
+    - check_sevicefile.rc != 0
+
+- name: check if docker.socket file exists
+  command: ls -l /usr/local/lib/systemd/system/docker.socket
+  ignore_errors: yes
+  changed_when: no
+  failed_when: no
+  become: yes
+  register: check_socketfile
+
+- name: copy docker.socket file
+  copy:
+    src: docker.socket
+    dest: /usr/local/lib/systemd/system/docker.socket
+  become: yes
+  when:
+    - check_socketfile.rc != 0
+
+- name: enable docker.service
+  ansible.builtin.systemd:
+    name: docker.service
+    state: started
+    enabled: yes
+  become: yes
